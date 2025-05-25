@@ -2,10 +2,7 @@
 
 class StringCalculator
   def add(numbers)
-    return 0 if numbers.empty?
-
     delimiter, numbers_string = extract_delimiter_and_numbers(numbers)
-    numbers_string = parse_numbers(numbers_string, delimiter)
     sum_of_numbers_string(numbers_string, delimiter)
   end
 
@@ -19,23 +16,21 @@ class StringCalculator
     [delimiter, numbers_string || '']
   end
 
-  # Replace newlines with commas, then split by comma
-  def parse_numbers(numbers, delimiter = ',')
-    numbers.gsub("\n", delimiter)
-  end
-
-  # Add the numbers in the string
-  def sum_of_numbers_string(numbers, delimiter = ',')
+  # Add the numbers in the string and also handles the delimiter
+  def sum_of_numbers_string(input, delimiter = ',')
     total = 0
     current = ''
-    numbers.each_char do |char|
-      unless char == delimiter
+
+    input.each_char do |char|
+      char = delimiter if char == "\n"
+      if char == delimiter
+        total += current.to_i
+        current = ''
+      else
         current += char
-        next
       end
-      total += current.to_i
-      current = ''
     end
+
     total + current.to_i
   end
 end
