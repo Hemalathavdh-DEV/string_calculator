@@ -4,12 +4,16 @@ class StringCalculator
   def add(numbers)
     return 0 if numbers.empty?
 
-    # Replace newlines with commas, then split by comma
-    normalized_numbers = numbers.gsub("\n", ',')
-    sum_of_numbers_string(normalized_numbers)
+    numbers = parse_numbers(numbers)
+    sum_of_numbers_string(numbers)
   end
 
   private
+
+  # Replace newlines with commas, then split by comma
+  def parse_numbers(numbers)
+    numbers.gsub("\n", ',')
+  end
 
   # Add the numbers in the string
   def sum_of_numbers_string(numbers)
