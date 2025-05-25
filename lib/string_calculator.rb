@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class StringCalculator
-  def self.add(input)
-    # logic to be added with tests
+  def add(numbers)
+    return 0 if numbers.empty?
   end
 end
