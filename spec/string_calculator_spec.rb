@@ -3,54 +3,65 @@
 require 'string_calculator'
 
 RSpec.describe StringCalculator do
-  let(:calculator) { StringCalculator.new }
+  subject(:calculator) { described_class.new }
+
+  # Shared example for testing multiple input/output pairs in order to remove duplication of code
+  shared_examples 'calculates sum of the numbers string' do |test_cases|
+    test_cases.each do |input, expected_output|
+      it "returns #{expected_output} for input '#{input}'" do
+        expect(calculator.add(input)).to eq(expected_output)
+      end
+    end
+  end
 
   describe '#add' do
-    # Empty string should return 0
-    it 'returns 0 for empty string' do
-      expect(calculator.add('')).to eq(0)
+    context 'empty, single and double numbers string' do
+      include_examples 'calculates sum of the numbers string', {
+        '' => 0,
+        '1' => 1,
+        '5' => 5,
+        '1,5' => 6,
+        '2,3' => 5
+      }
     end
 
-    # Single str value should return as single integer
-    it 'returns the number itself for single number' do
-      expect(calculator.add('1')).to eq(1)
-      expect(calculator.add('5')).to eq(5)
+    context 'multiple numbers in a string' do
+      include_examples 'calculates sum of the numbers string', {
+        '1,2,3' => 6,
+        '1,2,3,4,5' => 15,
+        '8,9,1,3' => 21
+      }
     end
 
-    # Sum the two numbers separated by comma
-    it 'returns sum of two numbers separated by comma' do
-      expect(calculator.add('1,5')).to eq(6)
-      expect(calculator.add('2,3')).to eq(5)
+    context 'newline delimiters in a string' do
+      include_examples 'calculates sum of the numbers string', {
+        "1\n2,3" => 6,
+        "1,2\n,6" => 9
+      }
     end
 
-    # Sum the multiple numbers separated by comma
-    it 'returns sum of multiple numbers' do
-      expect(calculator.add('1,2,3')).to eq(6)
-      expect(calculator.add('1,2,3,4,5')).to eq(15)
-      expect(calculator.add('8,12,3,4,5')).to eq(32)
+    context 'different delimiters in a string' do
+      include_examples 'calculates sum of the numbers string', {
+        "//;\n1;2" => 3,
+        "//|\n1|2|3" => 6
+      }
     end
 
-    # Ignore new lines between numbers and do sum
-    it 'handles newlines between numbers' do
-      expect(calculator.add("1\n2,3")).to eq(6)
-      expect(calculator.add("1,2\n,3")).to eq(6)
-      expect(calculator.add("2,2\n,1")).to eq(5)
+    context 'negative numbers' do
+      it 'throws exception for a negative number' do
+        expect { calculator.add('-1') }.to raise_error(ArgumentError, 'negative numbers not allowed: -1')
+      end
+
+      it 'show all negative numbers in the exception message' do
+        expect { calculator.add('1,-2,3,-4') }.to raise_error(ArgumentError, 'negative numbers not allowed: -2, -4')
+      end
     end
 
-    # Supports different delimiters
-    it 'supports custom delimiters' do
-      expect(calculator.add("//;\n1;2")).to eq(3)
-      expect(calculator.add("//|\n1|2|3")).to eq(6)
-    end
-
-    # Negative numbers are not allowed and to throw error
-    it 'throws exception for negative numbers' do
-      expect { calculator.add('-1') }.to raise_error(ArgumentError, 'negative numbers not allowed: -1')
-    end
-
-    it 'handles empty values between delimiters' do
-      expect(calculator.add('1,,2')).to eq(3)
-      expect(calculator.add("//;\n1;;2")).to eq(3)
+    context 'edge cases' do
+      include_examples 'calculates sum of the numbers string', {
+        '1,,2' => 3,
+        "//;\n1;;2" => 3
+      }
     end
   end
 end
