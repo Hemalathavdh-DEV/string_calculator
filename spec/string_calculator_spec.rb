@@ -1,15 +1,27 @@
 # frozen_string_literal: true
 
 require 'string_calculator'
+require 'errors/negative_integer_error'
 
 RSpec.describe StringCalculator do
   subject(:calculator) { described_class.new }
 
   # Shared example for testing multiple input/output pairs in order to remove duplication of code
-  shared_examples 'calculates sum of the numbers string' do |test_cases|
-    test_cases.each do |input, expected_output|
+  shared_examples 'calculates sum of the numbers string' do |test_inputs|
+    test_inputs.each do |input, expected_output|
       it "returns #{expected_output} for input '#{input}'" do
         expect(calculator.add(input)).to eq(expected_output)
+      end
+    end
+  end
+
+  # Shared Example for negative numbers in the string.
+  # We are defining and using a separate error class NegativeIntergerError for this.
+  shared_examples 'raise the exception for negative numbers in the string' do |test_inputs|
+    test_inputs.each do |input, negative_numbers|
+      it "raises negative exception for input '#{input}'" do
+        message = "negative numbers not allowed: #{negative_numbers.join(', ')}"
+        expect { calculator.add(input) }.to raise_error(NegativeIntegerError, message)
       end
     end
   end
