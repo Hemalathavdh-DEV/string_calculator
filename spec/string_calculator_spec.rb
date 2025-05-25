@@ -1,0 +1,108 @@
+# frozen_string_literal: true
+
+require 'string_calculator'
+require 'errors/negative_integer_error'
+
+# Test data
+BASIC_CASES = {
+  '' => 0,
+  '1' => 1,
+  '5' => 5,
+  '1,5' => 6,
+  '2,3' => 5
+}.freeze
+
+MULTIPLE_NUMBER_CASES = {
+  '1,2,3' => 6,
+  '1,2,3,4,5' => 15,
+  '8,9,1,3' => 21
+}.freeze
+
+NEWLINE_DELIMITER_CASES = {
+  "1\n2,3" => 6,
+  "1,2\n,6" => 9,
+  "1\n2\n3" => 6
+}.freeze
+
+CUSTOM_DELIMITER_CASES = {
+  "//;\n1;2" => 3,
+  "//|\n1|2|3" => 6,
+  "//#\n2#5" => 7,
+  "//.\n1.2.3.4" => 10
+}.freeze
+
+NEGATIVE_CASES = {
+  '-1' => [-1],
+  '1,-2,3,-4' => [-2, -4],
+  "//;\n1;-2;3;-4" => [-2, -4],
+  "1\n-2,3" => [-2]
+}.freeze
+
+EDGE_CASES = {
+  ',' => 0,
+  ',,' => 0,
+  '1,,2' => 3,
+  "1,\n2" => 3,
+  "//;\n1;;2" => 3
+}.freeze
+
+LARGE_NUMBER_CASES = {
+  '2,1001' => 2,
+  '1000,1' => 1001,
+  '999,1001,2' => 1001,
+  '1002,1101,2000' => 0
+}.freeze
+
+RSpec.describe StringCalculator do
+  subject(:calculator) { described_class.new }
+
+  # Shared example for testing multiple input/output pairs in order to remove duplication of code
+  shared_examples 'calculates sum of the numbers string' do |test_inputs|
+    test_inputs.each do |input, expected_output|
+      it "correctly sums #{input} to #{expected_output}" do
+        expect(calculator.add(input)).to eq(expected_output)
+      end
+    end
+  end
+
+  # Shared Example for negative numbers in the string.
+  # We are defining and using a separate error class NegativeIntegerError for this.
+  shared_examples 'raise the exception for negative numbers in the string' do |test_inputs|
+    test_inputs.each do |input, negative_numbers|
+      it "raises negative exception for input '#{input}'" do
+        message = "negative numbers not allowed: #{negative_numbers.join(', ')}"
+        expect { calculator.add(input) }.to raise_error(NegativeIntegerError, message)
+      end
+    end
+  end
+
+  describe '#add' do
+    context 'empty, single and double numbers string' do
+      include_examples 'calculates sum of the numbers string', BASIC_CASES
+    end
+
+    context 'multiple numbers in a string' do
+      include_examples 'calculates sum of the numbers string', MULTIPLE_NUMBER_CASES
+    end
+
+    context 'newline delimiters in a string' do
+      include_examples 'calculates sum of the numbers string', NEWLINE_DELIMITER_CASES
+    end
+
+    context 'different delimiters in a string' do
+      include_examples 'calculates sum of the numbers string', CUSTOM_DELIMITER_CASES
+    end
+
+    context 'negative numbers' do
+      include_examples 'raise the exception for negative numbers in the string', NEGATIVE_CASES
+    end
+
+    context 'edge cases' do
+      include_examples 'calculates sum of the numbers string', EDGE_CASES
+    end
+
+    context 'numbers greater than 1000 are ignored in the sum' do
+      include_examples 'calculates sum of the numbers string', LARGE_NUMBER_CASES
+    end
+  end
+end
