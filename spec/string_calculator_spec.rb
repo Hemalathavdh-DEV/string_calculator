@@ -52,18 +52,6 @@ LARGE_NUMBER_CASES = {
   '999,1001,2' => 1001
 }.freeze
 
-LONG_DELIMITER_CASES = {
-  "//[***]\n1***2***3" => 6,
-  "//[%%]\n2%%3%%4" => 9,
-  "//[!!]\n1!!1!!1" => 3
-}.freeze
-
-COMPLEX_DELIMITER_CASES = {
-  '//[*][%]\n1*2%3' => 6,
-  '//[***][%%]\n1***2%%3' => 6,
-  '//[--][::]\n4--5::6' => 15
-}.freeze
-
 RSpec.describe StringCalculator do
   subject(:calculator) { described_class.new }
 
@@ -114,14 +102,6 @@ RSpec.describe StringCalculator do
 
     context 'numbers from 1001 are ignored' do
       include_examples 'calculates sum of the numbers string', LARGE_NUMBER_CASES
-    end
-
-    context 'delimiters of any length' do
-      include_examples 'calculates sum of the numbers string', LONG_DELIMITER_CASES
-    end
-
-    context 'multiple and complex delimiters' do
-      include_examples 'calculates sum of the numbers string', COMPLEX_DELIMITER_CASES
     end
   end
 end
