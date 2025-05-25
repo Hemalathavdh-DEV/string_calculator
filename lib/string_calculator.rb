@@ -8,7 +8,7 @@ class StringCalculator
     number_array = parse_numbers(numbers_string, delimiter)
     validate_no_negatives(number_array)
 
-    number_array.sum
+    number_array.reject { |n| n > 1000 }.sum
   end
 
   private
