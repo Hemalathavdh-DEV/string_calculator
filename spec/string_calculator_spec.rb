@@ -49,7 +49,8 @@ EDGE_CASES = {
 LARGE_NUMBER_CASES = {
   '2,1001' => 2,
   '1000,1' => 1001,
-  '999,1001,2' => 1001
+  '999,1001,2' => 1001,
+  '1002,1101,2000' => 0
 }.freeze
 
 RSpec.describe StringCalculator do

@@ -3,12 +3,16 @@
 require_relative 'errors/negative_integer_error'
 
 class StringCalculator
+  # Numbers above these limits should be ignored
+  LARGE_NUMBERS = [1000].freeze
+
   def add(numbers)
     delimiter, numbers_string = extract_delimiter_and_numbers(numbers)
     number_array = parse_numbers(numbers_string, delimiter)
     validate_no_negatives(number_array)
 
-    number_array.reject { |n| n > 1000 }.sum
+    result_arr = ignore_large_numbers(number_array)
+    result_arr.sum
   end
 
   private
@@ -36,5 +40,9 @@ class StringCalculator
     return if negatives.empty?
 
     raise NegativeIntegerError, "negative numbers not allowed: #{negatives.join(', ')}"
+  end
+
+  def ignore_large_numbers(number_array)
+    number_array.select { |n| LARGE_NUMBERS.all? { |limit| n <= limit } }
   end
 end
