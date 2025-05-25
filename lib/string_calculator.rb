@@ -22,7 +22,10 @@ class StringCalculator
   # Handles the delimiter
   def parse_numbers(numbers_string, delimiter = ',')
     normalized = numbers_string.gsub("\n", delimiter)
-    normalized.split(delimiter).map(&:to_i)
+    normalized.split(delimiter)
+              .map(&:strip)
+              .reject(&:empty?)
+              .map(&:to_i)
   end
 
   def validate_no_negatives(numbers)
