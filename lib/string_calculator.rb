@@ -4,7 +4,9 @@ class StringCalculator
   def add(numbers)
     return 0 if numbers.empty?
 
-    sum_of_numbers_string(numbers)
+    # Replace newlines with commas, then split by comma
+    normalized_numbers = numbers.gsub("\n", ',')
+    sum_of_numbers_string(normalized_numbers)
   end
 
   private

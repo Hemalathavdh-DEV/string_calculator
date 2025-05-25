@@ -33,6 +33,8 @@ RSpec.describe StringCalculator do
     # Ignore new lines between numbers and do sum
     it 'handles newlines between numbers' do
       expect(calculator.add("1\n2,3")).to eq(6)
+      expect(calculator.add("1,2\n,3")).to eq(6)
+      expect(calculator.add("2,2\n,1")).to eq(5)
     end
   end
 end
