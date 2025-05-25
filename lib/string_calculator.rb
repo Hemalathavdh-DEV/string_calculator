@@ -3,7 +3,10 @@
 class StringCalculator
   def add(numbers)
     delimiter, numbers_string = extract_delimiter_and_numbers(numbers)
-    sum_of_numbers_string(numbers_string, delimiter)
+    number_array = parse_numbers(numbers_string, delimiter)
+    validate_no_negatives(number_array)
+
+    number_array.sum
   end
 
   private
@@ -16,21 +19,17 @@ class StringCalculator
     [delimiter, numbers_string || '']
   end
 
-  # Add the numbers in the string and also handles the delimiter
-  def sum_of_numbers_string(input, delimiter = ',')
-    total = 0
-    current = ''
+  # Handles the delimiter
+  def parse_numbers(numbers_string, delimiter = ',')
+    normalized = numbers_string.gsub("\n", delimiter)
+    normalized.split(delimiter).map(&:to_i)
+  end
 
-    input.each_char do |char|
-      char = delimiter if char == "\n"
-      if char == delimiter
-        total += current.to_i
-        current = ''
-      else
-        current += char
-      end
-    end
+  def validate_no_negatives(numbers)
+    negatives = numbers.select(&:negative?)
 
-    total + current.to_i
+    return if negatives.empty?
+
+    raise ArgumentError, "negative numbers not allowed: #{negatives.join(', ')}"
   end
 end
