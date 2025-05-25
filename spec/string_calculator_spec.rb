@@ -59,14 +59,14 @@ RSpec.describe StringCalculator do
   # Shared example for testing multiple input/output pairs in order to remove duplication of code
   shared_examples 'calculates sum of the numbers string' do |test_inputs|
     test_inputs.each do |input, expected_output|
-      it "returns #{expected_output} for input '#{input}'" do
+      it "correctly sums #{input} to #{expected_output}" do
         expect(calculator.add(input)).to eq(expected_output)
       end
     end
   end
 
   # Shared Example for negative numbers in the string.
-  # We are defining and using a separate error class NegativeIntergerError for this.
+  # We are defining and using a separate error class NegativeIntegerError for this.
   shared_examples 'raise the exception for negative numbers in the string' do |test_inputs|
     test_inputs.each do |input, negative_numbers|
       it "raises negative exception for input '#{input}'" do
@@ -101,7 +101,7 @@ RSpec.describe StringCalculator do
       include_examples 'calculates sum of the numbers string', EDGE_CASES
     end
 
-    context 'numbers from 1001 are ignored' do
+    context 'numbers greater than 1000 are ignored in the sum' do
       include_examples 'calculates sum of the numbers string', LARGE_NUMBER_CASES
     end
   end

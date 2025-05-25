@@ -11,8 +11,8 @@ class StringCalculator
     number_array = parse_numbers(numbers_string, delimiter)
     validate_no_negatives(number_array)
 
-    result_arr = ignore_large_numbers(number_array)
-    result_arr.sum
+    result_array = ignore_large_numbers(number_array)
+    result_array.sum
   end
 
   private
