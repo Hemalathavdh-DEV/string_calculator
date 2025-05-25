@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'errors/negative_integer_error'
+
 class StringCalculator
   def add(numbers)
     delimiter, numbers_string = extract_delimiter_and_numbers(numbers)
@@ -33,6 +35,6 @@ class StringCalculator
 
     return if negatives.empty?
 
-    raise ArgumentError, "negative numbers not allowed: #{negatives.join(', ')}"
+    raise NegativeIntegerError, "negative numbers not allowed: #{negatives.join(', ')}"
   end
 end

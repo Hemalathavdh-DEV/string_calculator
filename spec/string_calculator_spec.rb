@@ -3,6 +3,49 @@
 require 'string_calculator'
 require 'errors/negative_integer_error'
 
+# Test data
+BASIC_CASES = {
+  '' => 0,
+  '1' => 1,
+  '5' => 5,
+  '1,5' => 6,
+  '2,3' => 5
+}.freeze
+
+MULTIPLE_NUMBER_CASES = {
+  '1,2,3' => 6,
+  '1,2,3,4,5' => 15,
+  '8,9,1,3' => 21
+}.freeze
+
+NEWLINE_DELIMITER_CASES = {
+  "1\n2,3" => 6,
+  "1,2\n,6" => 9,
+  "1\n2\n3" => 6
+}.freeze
+
+CUSTOM_DELIMITER_CASES = {
+  "//;\n1;2" => 3,
+  "//|\n1|2|3" => 6,
+  "//#\n2#5" => 7,
+  "//.\n1.2.3.4" => 10
+}.freeze
+
+NEGATIVE_CASES = {
+  '-1' => [-1],
+  '1,-2,3,-4' => [-2, -4],
+  "//;\n1;-2;3;-4" => [-2, -4],
+  "1\n-2,3" => [-2]
+}.freeze
+
+EDGE_CASES = {
+  ',' => 0,
+  ',,' => 0,
+  '1,,2' => 3,
+  "1,\n2" => 3,
+  "//;\n1;;2" => 3
+}.freeze
+
 RSpec.describe StringCalculator do
   subject(:calculator) { described_class.new }
 
@@ -28,52 +71,27 @@ RSpec.describe StringCalculator do
 
   describe '#add' do
     context 'empty, single and double numbers string' do
-      include_examples 'calculates sum of the numbers string', {
-        '' => 0,
-        '1' => 1,
-        '5' => 5,
-        '1,5' => 6,
-        '2,3' => 5
-      }
+      include_examples 'calculates sum of the numbers string', BASIC_CASES
     end
 
     context 'multiple numbers in a string' do
-      include_examples 'calculates sum of the numbers string', {
-        '1,2,3' => 6,
-        '1,2,3,4,5' => 15,
-        '8,9,1,3' => 21
-      }
+      include_examples 'calculates sum of the numbers string', MULTIPLE_NUMBER_CASES
     end
 
     context 'newline delimiters in a string' do
-      include_examples 'calculates sum of the numbers string', {
-        "1\n2,3" => 6,
-        "1,2\n,6" => 9
-      }
+      include_examples 'calculates sum of the numbers string', NEWLINE_DELIMITER_CASES
     end
 
     context 'different delimiters in a string' do
-      include_examples 'calculates sum of the numbers string', {
-        "//;\n1;2" => 3,
-        "//|\n1|2|3" => 6
-      }
+      include_examples 'calculates sum of the numbers string', CUSTOM_DELIMITER_CASES
     end
 
     context 'negative numbers' do
-      it 'throws exception for a negative number' do
-        expect { calculator.add('-1') }.to raise_error(ArgumentError, 'negative numbers not allowed: -1')
-      end
-
-      it 'show all negative numbers in the exception message' do
-        expect { calculator.add('1,-2,3,-4') }.to raise_error(ArgumentError, 'negative numbers not allowed: -2, -4')
-      end
+      include_examples 'raise the exception for negative numbers in the string', NEGATIVE_CASES
     end
 
     context 'edge cases' do
-      include_examples 'calculates sum of the numbers string', {
-        '1,,2' => 3,
-        "//;\n1;;2" => 3
-      }
+      include_examples 'calculates sum of the numbers string', EDGE_CASES
     end
   end
 end
